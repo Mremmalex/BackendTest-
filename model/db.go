@@ -8,32 +8,30 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-//DB is a global sql.DB instance
-var db *sql.DB
+//Dbcon is a global sql.DB instance
+func Dbcon() (db *sql.DB, err error) {
+    db, err = sql.Open("mysql", "root@tcp(localhost:3306)/backendtest")
+    return db, err
+}
 
 //Main initilization and configoration sql database
 func Init() {
-	db, err := sql.Open("mysql", "root@tcp(localhost:3306)/")
-		if err != nil {
-		    log.Panic(err.Error())
-		}
-    defer db.Close()
-
-    _, err = db.Exec("CREATE DATABASE IF NOT EXISTS backendtest")
-    if err  != nil {
-        log.Panic(err)
-    }
-    useDB(db, "backendtest")
-    CreateUserTable(db) 
+    createDB("backendtest")
+    useDB("backendtest")
+    CreateUserTable() 
+    CreateEventTable()
 }
 
 func createDB(dbname string) {
-    _, err := db.Exec("CREATE DATABASE IF NOT EXITS" +dbname+ " ") 
+    db,_ := Dbcon()
+    _, err := db.Exec("CREATE DATABASE IF NOT EXISTS " + dbname + " ") 
     if err  != nil {
         panic(err)
     }
 }
-func useDB(db *sql.DB, dbname string) {
+
+func useDB(dbname string) {
+    db, _ := Dbcon()
     _, err := db.Exec("USE " + dbname + " ")
     if err != nil {
         log.Panic(err)

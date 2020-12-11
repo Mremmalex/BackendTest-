@@ -10,7 +10,7 @@ import (
 func main() {
 	model.Init()
 	routes.Init()
-	fmt.Println("server starting at port:8080")
+	fmt.Println("server starting at port:5000")
 	http.ListenAndServe(":5000", nil)
 }
 

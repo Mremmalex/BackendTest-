@@ -10,10 +10,11 @@ import (
 //User is a struct that maps to the fileds
 //we have in our database
 type User struct {
-	ID       int    `json:"id"`
+	UserID       int    `json:"userid"`
 	FullName string `json:"fullname"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+    Password string `json:"password"`
 }
 
 //Jsonresponse is a struct for returning
@@ -25,11 +26,13 @@ type Jsonresponse struct {
 //Init is define the userRoute url routes
 func Init() {
 	http.HandleFunc("/", Index)
+    http.HandleFunc("/event", Events)
 	http.HandleFunc("/auth", registerFunc)
 }
 
 func homePage(res http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
+		res.Header().Set("content-type", "application/json")
 		res.Write([]byte("this is the homePage"))
 	}
 }
