@@ -10,7 +10,7 @@ import (
 
 //Dbcon is a global sql.DB instance
 func Dbcon() (db *sql.DB, err error) {
-    db, err = sql.Open("mysql", "root@tcp(localhost:3306)/backendtest")
+    db, err = sql.Open("mysql", "root:password@tcp(localhost:3306)/backendtest")
     return db, err
 }
 
@@ -26,14 +26,14 @@ func createDB(dbname string) {
     db,_ := Dbcon()
     _, err := db.Exec("CREATE DATABASE IF NOT EXISTS " + dbname + " ") 
     if err  != nil {
-        panic(err)
+        log.Panic(err.Error())
     }
 }
-
+//useDB tells sql package the database to focus on 
 func useDB(dbname string) {
     db, _ := Dbcon()
     _, err := db.Exec("USE " + dbname + " ")
     if err != nil {
-        log.Panic(err)
+        log.Panic(err.Error())
     }
 }

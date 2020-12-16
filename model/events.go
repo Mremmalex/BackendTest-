@@ -13,7 +13,6 @@ func CreateEventTable() {
     }
 }
 
-
 func InsertEvent() (result *sql.Stmt, err error) {
     db, err := Dbcon()
     result,err = db.Prepare("INSERT INTO events (EventName, EventDesc, EventDate,EventTime, EventRegion) VALUES (?, ?, ?, ?, ?)")
@@ -24,4 +23,22 @@ func GetAllEvent()(result *sql.Rows, err error ) {
         db, err := Dbcon()
         result, err = db.Query("SELECT * FROM events")
         return result, err 
+}
+
+func GetEventName()(result *sql.Rows, err error){
+    db, err := Dbcon()
+    result, err = db.Query("SELECT EventID, EventName,EventDate,EventTime,EventRegion FROM events")
+    return result, err
+}
+
+func SortEventByRegion(region string) (result *sql.Rows, err error) {
+    db, err := Dbcon()
+    result, err = db.Query("SELECT EventID, EventName,EventDate,EventTime,EventRegion FROM events WHERE EventRegion=?",region)
+    return result, err
+}
+
+func GetEventByID(ID string)(result *sql.Row,err error){
+    db, err := Dbcon()
+    result = db.QueryRow("SELECT * FROM events WHERE EventID=?", ID)
+    return result, err 
 }
