@@ -20,6 +20,7 @@ func Init() {
 	useDB("backendtest")
 	CreateUserTable()
 	CreateEventTable()
+	CreateAddFriendTable()
 }
 
 func createDB(dbname string) {

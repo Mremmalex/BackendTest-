@@ -58,3 +58,14 @@ func IsAuthorised(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
 		}
 	})
 }
+func DecodeToken(tokenString string) (username string, err error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return mysignedKey, nil
+	})
+
+	if token != nil {
+		return claims.Username, nil
+	}
+	return "", err
+}

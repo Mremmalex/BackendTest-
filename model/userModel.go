@@ -6,21 +6,40 @@ import (
 )
 
 func CreateUserTable() {
-    db , _ := Dbcon()
-    _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (userID INT AUTO_INCREMENT, FirstName CHAR(74), LastName CHAR(74), Username CHAR(74) ,Email CHAR(90), Password CHAR(225), DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,PRIMARY KEY(userID) )")
-    if err != nil  {
-        log.Panic(err.Error())
-    }
+	db, _ := Dbcon()
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS users (userID INT AUTO_INCREMENT, FirstName CHAR(74), LastName CHAR(74), Username CHAR(74) ,Email CHAR(90), Password CHAR(225), DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,PRIMARY KEY(userID) )")
+	if err != nil {
+		log.Panic(err.Error())
+	}
+}
+func CreateAddFriendTable() {
+	db, _ := Dbcon()
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS friendlist (tableID INT AUTO_INCREMENT, UserToAdd INT , UserAdding INT, accpted BOOLEAN DEFAULT false ,PRIMARY KEY(tableID))")
+	if err != nil {
+		log.Panic(err.Error())
+	}
 }
 
-
-func InsertUser() (result *sql.Stmt, err error){
-    db, err := Dbcon()
-    result, err = db.Prepare("INSERT INTO users(FirstName, LastName, Username, Email, Password) VALUES (?,?,?,?,?)")
-    return result, err
+func InsertUser() (result *sql.Stmt, err error) {
+	db, err := Dbcon()
+	result, err = db.Prepare("INSERT INTO users(FirstName, LastName, Username, Email, Password) VALUES (?,?,?,?,?)")
+	return result, err
 }
 func SelectOneUser(username string, email string) (result *sql.Row, err error) {
-    db, err := Dbcon()
-    result = db.QueryRow("SELECT Username, Email, Password FROM users WHERE Username=? AND email=?" , username, email)
-    return result, err
+	db, err := Dbcon()
+	result = db.QueryRow("SELECT Username, Email, Password FROM users WHERE Username=? AND email=?", username, email)
+	return result, err
+}
+
+func SelectOneUserByUsername(username string) (result *sql.Row, err error) {
+	db, err := Dbcon()
+	result = db.QueryRow("SELECT userID, Username,  Email FROM users WHERE Username=?", username)
+	return result, err
+}
+
+//this is the query for adding friends
+func AddFriend() (result *sql.Stmt, err error) {
+	db, _ := Dbcon()
+	result, err = db.Prepare("INSERT INTO friendlist(userToAdd , userAdding) VALUES(?,?) ")
+	return result, err
 }

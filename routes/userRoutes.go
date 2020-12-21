@@ -21,6 +21,10 @@ type User struct {
 	Password  string `json:"password"`
 }
 
+type FriendRequest struct {
+	Email string `json:"email"`
+}
+
 //Token is a global toke variable
 var Token string
 
@@ -97,5 +101,36 @@ func UserSignIn(w http.ResponseWriter, r *http.Request) {
 			respData, _ := json.Marshal(response)
 			w.Write(respData)
 		}
+	}
+}
+
+func SendFriendRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		w.Header().Set("content-type", "application/json")
+		reqBody, _ := ioutil.ReadAll(r.Body)
+		var userr User
+		json.Unmarshal(reqBody, &userr)
+		token := r.Header.Get("Token")
+		username, _ := middlewares.DecodeToken(token)
+		result, err := model.SelectOneUserByUsername(username)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		user := User{}
+		err = result.Scan(&user.UserID, &user.Username, &user.Email)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		stmt, err := model.AddFriend()
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		_, err = stmt.Exec()
+	}
+	if r.Method == "GET" {
+		response := Jsonresponse{"this is a secure routes"}
+		respData, _ := json.Marshal(response)
+		w.Write(respData)
+
 	}
 }
