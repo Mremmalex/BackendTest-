@@ -108,8 +108,8 @@ func SendFriendRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		w.Header().Set("content-type", "application/json")
 		reqBody, _ := ioutil.ReadAll(r.Body)
-		var userr User
-		json.Unmarshal(reqBody, &userr)
+		var usertoadd User
+		json.Unmarshal(reqBody, &usertoadd)
 		token := r.Header.Get("Token")
 		username, _ := middlewares.DecodeToken(token)
 		result, err := model.SelectOneUserByUsername(username)
@@ -121,12 +121,26 @@ func SendFriendRequest(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Panic(err.Error())
 		}
-		stmt, err := model.AddFriend()
+		person := User{}
+		friendtoadd, err := model.SelectOneUserByUsername(usertoadd.Username)
+		err = friendtoadd.Scan(&person.UserID, &person.Username, &person.Email)
 		if err != nil {
 			log.Panic(err.Error())
 		}
-		_, err = stmt.Exec()
+		if person.Username == usertoadd.Username {
+			stmt, err := model.AddFriend()
+			if err != nil {
+				log.Panic(err.Error())
+			}
+			_, err = stmt.Exec(person.UserID, user.UserID)
+			response := Jsonresponse{"Friend Request Has Been Sent"}
+			respData, _ := json.Marshal(response)
+			w.Write(respData)
+
+		}
+
 	}
+
 	if r.Method == "GET" {
 		response := Jsonresponse{"this is a secure routes"}
 		respData, _ := json.Marshal(response)

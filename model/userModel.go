@@ -14,7 +14,7 @@ func CreateUserTable() {
 }
 func CreateAddFriendTable() {
 	db, _ := Dbcon()
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS friendlist (tableID INT AUTO_INCREMENT, UserToAdd INT , UserAdding INT, accpted BOOLEAN DEFAULT false ,PRIMARY KEY(tableID))")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS friendlist (tableID INT AUTO_INCREMENT, UserToAdd INT , UserAdding INT, accpted CHAR(29) DEFAULT 'false' ,PRIMARY KEY(tableID))")
 	if err != nil {
 		log.Panic(err.Error())
 	}
