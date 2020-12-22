@@ -14,7 +14,7 @@ func CreateUserTable() {
 }
 func CreateAddFriendTable() {
 	db, _ := Dbcon()
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS friendlist (tableID INT AUTO_INCREMENT, UserToAdd INT , UserAdding INT, accpted CHAR(29) DEFAULT 'false' ,PRIMARY KEY(tableID))")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS friendlist (tableID INT AUTO_INCREMENT, UserToAdd INT , UserAdding INT, Accepted CHAR(29) DEFAULT 'false' ,PRIMARY KEY(tableID))")
 	if err != nil {
 		log.Panic(err.Error())
 	}
@@ -40,6 +40,22 @@ func SelectOneUserByUsername(username string) (result *sql.Row, err error) {
 //this is the query for adding friends
 func AddFriend() (result *sql.Stmt, err error) {
 	db, _ := Dbcon()
-	result, err = db.Prepare("INSERT INTO friendlist(userToAdd , userAdding) VALUES(?,?) ")
+	result, err = db.Prepare("INSERT INTO friendlist(UserToAdd , UserAdding) VALUES(?,?) ")
 	return result, err
 }
+
+func GetFriendRequest(userid int) (*sql.Rows, error) {
+	db, _ := Dbcon()
+	result, err := db.Query("SELECT * FROM friendlist WHERE UserToAdd=?", userid)
+	return result, err
+}
+func GetUserById(userid int) (*sql.Row, error) {
+	db, err := Dbcon()
+	result := db.QueryRow("SELECT Username FROM users WHERE userID=?", userid)
+	return result, err
+}
+
+// func AcceptFriendRequest() {
+// 	db, err := Dbcon()
+// 	result := db.QueryRow()
+// }

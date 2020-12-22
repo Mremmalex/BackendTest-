@@ -14,4 +14,6 @@ func Init() {
 	http.HandleFunc("/auth/signup", UserSignUp)
 	http.HandleFunc("/auth/login", UserSignIn)
 	http.HandleFunc("/auth/addfriend", middlewares.IsAuthorised(SendFriendRequest))
+	http.HandleFunc("/auth/notification", middlewares.IsAuthorised(Notification))
+	http.HandleFunc("/auth/accept", middlewares.IsAuthorised(AcceptFriendRequest))
 }

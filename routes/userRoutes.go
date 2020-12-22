@@ -25,6 +25,14 @@ type FriendRequest struct {
 	Email string `json:"email"`
 }
 
+//notification struct is used for structing the notification
+type FriendList struct {
+	TableID    int    `json:"tableid"`
+	UserToAdd  int    `json:"usertoadd"`
+	UserAdding int    `json:"useradding"`
+	Accepted   string `json:"accepted"`
+}
+
 //Token is a global toke variable
 var Token string
 
@@ -146,5 +154,11 @@ func SendFriendRequest(w http.ResponseWriter, r *http.Request) {
 		respData, _ := json.Marshal(response)
 		w.Write(respData)
 
+	}
+}
+
+func AcceptFriendRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		w.Write([]byte("friend Request accepted"))
 	}
 }
