@@ -1,4 +1,4 @@
-package routes
+
 
 import (
 	"backEndTest/middlewares"
@@ -20,7 +20,6 @@ type User struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
-
 type FriendRequest struct {
 	Email string `json:"email"`
 }
@@ -31,6 +30,9 @@ type FriendList struct {
 	UserToAdd  int    `json:"usertoadd"`
 	UserAdding int    `json:"useradding"`
 	Accepted   string `json:"accepted"`
+}
+type AcceptFriend struct {
+	Accepted string `json:"accepted"`
 }
 
 //Token is a global toke variable
@@ -159,6 +161,32 @@ func SendFriendRequest(w http.ResponseWriter, r *http.Request) {
 
 func AcceptFriendRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		w.Write([]byte("friend Request accepted"))
+		w.Header().Set("content-type", "application/json")
+		var acceptRequest AcceptFriend
+		param := r.Header.Get("Token")
+		rbody, _ := ioutil.ReadAll(r.Body)
+		json.Unmarshal(rbody, &acceptRequest)
+		username, _ := middlewares.DecodeToken(param)
+		result, err := model.SelectOneUserByUsername(username)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		var current User
+		err = result.Scan(&current.UserID, &current.Username, &current.Email)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		stmt, err := model.AcceptFriendRequest()
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		_, err = stmt.Exec(acceptRequest.Accepted, current.UserID)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		response := Jsonresponse{"Friend Request Accepted"}
+		respData, _ := json.Marshal(response)
+		w.Write(respData)
+
 	}
 }

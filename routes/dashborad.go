@@ -62,3 +62,9 @@ func Notification(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+// CreateNewEvent(w http.ResponseWriter, r *http.Request){
+// 	if r.Method == "POST"{
+// 		w.Header().Set("content-type", "application/json")
+// 	}
+// }

@@ -55,7 +55,8 @@ func GetUserById(userid int) (*sql.Row, error) {
 	return result, err
 }
 
-// func AcceptFriendRequest() {
-// 	db, err := Dbcon()
-// 	result := db.QueryRow()
-// }
+func AcceptFriendRequest() (result *sql.Stmt, err error) {
+	db, err := Dbcon()
+	result, err = db.Prepare("UPDATE friendlist SET Accepted=? WHERE UserToAdd=?")
+	return result, err
+}
